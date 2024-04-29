@@ -153,6 +153,7 @@ func (k BaseKeeper) DelegateCoins(ctx sdk.Context, delegatorAddr, moduleAccAddr 
 
 	for _, coin := range amt {
 		balance := k.GetBalance(ctx, delegatorAddr, coin.GetDenom())
+		k.Logger(ctx).Info("BaseKeeper.DelegateCoins GetBalance", "delegatorAddr", delegatorAddr.String(), "balance", balance.String())
 		if balance.IsLT(coin) {
 			return sdkerrors.Wrapf(
 				sdkerrors.ErrInsufficientFunds, "failed to delegate; %s is smaller than %s", balance, amt,
@@ -164,6 +165,10 @@ func (k BaseKeeper) DelegateCoins(ctx sdk.Context, delegatorAddr, moduleAccAddr 
 		if err != nil {
 			return err
 		}
+
+		balance = k.GetBalance(ctx, delegatorAddr, coin.GetDenom())
+		k.Logger(ctx).Info("BaseKeeper.DelegateCoins after GetBalance", "delegatorAddr", delegatorAddr.String(), "balance", balance.String())
+
 	}
 
 	if err := k.trackDelegation(ctx, delegatorAddr, balances, amt); err != nil {
