@@ -195,8 +195,10 @@ func (k BaseSendKeeper) SendCoins(ctx sdk.Context, fromAddr sdk.AccAddress, toAd
 		return err
 	}
 
+	k.Logger(ctx).Info("BaseSendKeeper.SendCoins bank send coins", "recipient", toAddr.String(), "amount", amt.String())
 	err = k.addCoins(ctx, toAddr, amt)
 	if err != nil {
+		k.Logger(ctx).Error("BaseSendKeeper.SendCoins bank send coins err", "error", err.Error())
 		return err
 	}
 
@@ -206,6 +208,7 @@ func (k BaseSendKeeper) SendCoins(ctx sdk.Context, fromAddr sdk.AccAddress, toAd
 	// such as delegated fee messages.
 	accExists := k.ak.HasAccount(ctx, toAddr)
 	if !accExists {
+		k.Logger(ctx).Info("BaseSendKeeper.SendCoins acc not exist", "acc", toAddr.String())
 		defer telemetry.IncrCounter(1, "new", "account")
 		k.ak.SetAccount(ctx, k.ak.NewAccountWithAddress(ctx, toAddr))
 	}
@@ -279,12 +282,16 @@ func (k BaseSendKeeper) addCoins(ctx sdk.Context, addr sdk.AccAddress, amt sdk.C
 
 	for _, coin := range amt {
 		balance := k.GetBalance(ctx, addr, coin.Denom)
+		k.Logger(ctx).Info("BaseSendKeeper.addCoins before", "balance", balance.String(), "amount", amt.String())
 		newBalance := balance.Add(coin)
 
 		err := k.setBalance(ctx, addr, newBalance)
 		if err != nil {
 			return err
 		}
+
+		balance = k.GetBalance(ctx, addr, coin.Denom)
+		k.Logger(ctx).Info("BaseSendKeeper.addCoins after", "balance", balance.String())
 	}
 
 	// emit coin received event

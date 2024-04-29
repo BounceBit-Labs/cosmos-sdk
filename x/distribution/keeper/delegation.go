@@ -1,9 +1,8 @@
 package keeper
 
 import (
-	"fmt"
-
 	"cosmossdk.io/math"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -169,6 +168,8 @@ func (k Keeper) withdrawDelegationRewards(ctx sdk.Context, val stakingtypes.Vali
 	// add coins to user account
 	if !finalRewards.IsZero() {
 		withdrawAddr := k.GetDelegatorWithdrawAddr(ctx, del.GetDelegatorAddr())
+
+		k.Logger(ctx).Info("withdrawDelegationRewards withdraw addr", "withdrawAddr", withdrawAddr, "amount", finalRewards.String())
 		err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, withdrawAddr, finalRewards)
 		if err != nil {
 			return nil, err
