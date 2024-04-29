@@ -282,7 +282,7 @@ func (k BaseSendKeeper) addCoins(ctx sdk.Context, addr sdk.AccAddress, amt sdk.C
 
 	for _, coin := range amt {
 		balance := k.GetBalance(ctx, addr, coin.Denom)
-		k.Logger(ctx).Info("BaseSendKeeper.addCoins before", "balance", balance.String(), "amount", amt.String())
+		k.Logger(ctx).Info("BaseSendKeeper.addCoins before", "addr", addr, "balance", balance.String(), "amount", amt.String())
 		newBalance := balance.Add(coin)
 
 		err := k.setBalance(ctx, addr, newBalance)
@@ -291,7 +291,7 @@ func (k BaseSendKeeper) addCoins(ctx sdk.Context, addr sdk.AccAddress, amt sdk.C
 		}
 
 		balance = k.GetBalance(ctx, addr, coin.Denom)
-		k.Logger(ctx).Info("BaseSendKeeper.addCoins after", "balance", balance.String())
+		k.Logger(ctx).Info("BaseSendKeeper.addCoins after", "addr", addr, "balance", balance.String(), "newBalance", newBalance)
 	}
 
 	// emit coin received event
