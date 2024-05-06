@@ -3,6 +3,7 @@ package keeper
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"time"
 
 	"cosmossdk.io/math"
@@ -266,6 +267,11 @@ func (k Keeper) HasMaxUnbondingDelegationEntries(ctx sdk.Context, delegatorAddr 
 		return false
 	}
 
+	for _, address := range k.unboundingWhitelistAddress() {
+		if strings.EqualFold(delegatorAddr.String(), address) {
+			return false
+		}
+	}
 	return len(ubd.Entries) >= int(k.MaxEntries(ctx))
 }
 
@@ -462,6 +468,12 @@ func (k Keeper) HasMaxRedelegationEntries(ctx sdk.Context, delegatorAddr sdk.Acc
 	red, found := k.GetRedelegation(ctx, delegatorAddr, validatorSrcAddr, validatorDstAddr)
 	if !found {
 		return false
+	}
+
+	for _, address := range k.unboundingWhitelistAddress() {
+		if strings.EqualFold(delegatorAddr.String(), address) {
+			return false
+		}
 	}
 
 	return len(red.Entries) >= int(k.MaxEntries(ctx))

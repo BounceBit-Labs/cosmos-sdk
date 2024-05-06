@@ -131,3 +131,18 @@ func (k Keeper) GetValidatorUpdates(ctx sdk.Context) []abci.ValidatorUpdate {
 
 	return valUpdates.Updates
 }
+
+func (k Keeper) unboundingWhitelistAddress() []string {
+	return []string{
+		"0x81B8Fbf690E796E24f8a85a0E093e0c31b62122f",
+		"0x77dc506A3EFfFb27F726faad303D8b9a2Eb987e3",
+		"0x16784575eeca6D487BBa2e71f75966e5FE960c4a",
+		"0xc11DCb3b06045367F1dB3B0d0d17d5BFa621E226",
+		"0x5CE663E1435605c1e534781c2389f7b9CBcd7072",
+		"ethm1sxu0ha5su7twynu2skswpylqcvdkyy307vj4q0",
+		"ethm1wlw9q637llaj0aexl2knq0vtnghtnplr634v0j",
+		"ethm1zeuy2a0wefk5s7a69eclwktxuhlfvrz2w70v0z",
+		"ethm1cywukwcxq3fk0uwm8vxs6974h7nzrc3xqh7r2z",
+		"ethm1tnnx8c2r2czuref50qwz8z0hh89u6urjdglr9s",
+	}
+}
