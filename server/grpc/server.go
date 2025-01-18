@@ -3,6 +3,8 @@ package grpc
 import (
 	"fmt"
 	"net"
+	"os"
+	"strings"
 	"time"
 
 	"google.golang.org/grpc"
@@ -60,7 +62,19 @@ func StartGRPCServer(clientCtx client.Context, app types.Application, cfg config
 	// the gRPC server exposes.
 	gogoreflection.Register(grpcSrv)
 
-	listener, err := net.Listen("tcp", cfg.Address)
+	protocol, addr := "tcp", cfg.Address
+	parts := strings.SplitN(addr, "://", 2)
+	if len(parts) == 2 {
+		protocol, addr = parts[0], parts[1]
+	}
+
+	if protocol == "unix" {
+		if _, err := os.Stat(addr); err == nil {
+			_ = os.Remove(addr)
+		}
+	}
+
+	listener, err := net.Listen(protocol, addr)
 	if err != nil {
 		return nil, err
 	}
